@@ -79,7 +79,7 @@ while True:
                    eqmag.append(eqdata["features"][i]["properties"]["mag"])
                    eqlat.append(str(round( eqdata["features"][i]["geometry"]["coordinates"][0], 4 ) ))
                    eqlon.append(str(round( eqdata["features"][i]["geometry"]["coordinates"][1], 4 ) ))
-                   file.write("%s  %5.2f   %s\n" % (eqtime[i], eqmag[i], eqplace[i]))
+                   file.write("<br>%s  %5.2f   %s\n" % (eqtime[i], eqmag[i], eqplace[i]))
                file.write('</div>')
                file.write('<script>')
                file.write("var mymap = L.map('mapid').setView([37.89, -122.05], 8);\n")
