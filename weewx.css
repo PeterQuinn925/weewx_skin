@@ -1,0 +1,319 @@
+/* 
+Are you sure you're editing the right file!!! If you're in pdq_skins, it won't make a difference!!!
+
+
+CSS for the weewx Standard skin
+ *
+ *  Copyright (c) 2015 Tom Keffer <tkeffer@gmail.com>
+ * 
+ *  See the file LICENSE.txt for your rights.
+ */
+  
+/* Global */
+/* use the fonts from google */
+ @import url('https://fonts.googleapis.com/css?family=Open+Sans');
+
+/* use the local fonts */
+@font-face {
+    font-family: 'Open Sans';
+    src: url('font/OpenSans.woff') format('woff'),
+    url('font/OpenSans.woff2') format('woff2');
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-family: 'Open Sans', arial, sans-serif;
+    background-color: var(--background-color);
+/*    font-family: Verdana, Arial, Helvetica, sans-serif;*/
+    font-size: 10pt;
+/*    background-color: #f2f2f7; */
+    background-image: url('backgrounds/band.gif');
+    background-repeat: repeat;
+    background-attachment: scroll;
+    --background-color:#ffffff;
+    --title-background-color:#dddddd;
+    --button-background-color:#bbbbbb;
+    --element-background-color:#d2e8e8;
+    --section-border-color:#aaaaaa;
+    --cell-border-color:#dddddd;
+    --highlight-color:#4282b4;
+    --link-color:#4282b4;
+    --visited-color:#4282b4;
+    --hover-color:#4282b4;
+    --timestamp-color:#aaaaaa;
+    --hival-color:#aa4444;
+    --loval-color:#4444aa;
+    --ok-color:#44aa44;
+    --low-color:#aa4444;
+
+}	
+
+#container {
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+
+/*
+ * This is the big header at the top of the page
+ */
+#masthead {
+    margin: 1% 1% 0 1%;
+    padding: 5px;
+    text-align: center;
+    border-top: 1px solid #dcdcdc;
+    border-right: 1px solid #a9a9a9;
+    border-bottom: 1px solid #808080;
+    border-left: 1px solid #a9a9a9;
+/*    background-color: #fafaff; old value */
+    background-color: transparent;
+}
+#banner {
+    position: absolute;
+    top: 6px;
+    left: 6px;
+    right: 5px;
+    width: 99%;
+    height: 120px;
+    z-index: -1;
+}
+
+
+#masthead h1 {
+/*    color: #3d6c87; original*/
+      color: #ffffff;
+      text-shadow: 2px 2px 0px #000000;
+}
+#masthead h3 {
+    color: #5f8ea9;
+}
+/*added for transparent picture - pdq */
+#masthead h2 {
+    color: #ffffff;
+    text-shadow: 2px 2px 0px #000000;
+}
+
+/*
+ * This holds the statistics (daily high/low, etc.) on the left: 
+ */
+#stats_group {
+    width: 30%;
+    min-height: 500px;
+    margin: 1%;
+    padding: 2px, 10px,2px, 10px;
+    float: left;
+/*    border-top: 1px solid #dcdcdc;
+    border-right: 1px solid #a9a9a9; */
+    border-bottom: 2px solid #808080;
+/*    border-left: 1px solid #a9a9a9; */
+   background-color: #ffffff;
+  font-weight: bold;
+}
+
+.stats table {
+/*    border: thin solid #000000;
+    width: 100%; /*
+font-family: 'Open Sans', arial, sans-serif;
+}
+.stats td {
+/*    border: thin solid #000000;*/
+    padding: 2px;
+}
+
+.stats_header  {
+    background-color: #ffffff;
+    color: #000000;
+    font-size: 16pt;
+    font-weight: bold;
+}
+
+.stats_label {
+    font-size: 10.5pt;
+    color: #000000;
+    font-weight: normal;
+}
+
+.stats_data {
+    font-size: 11pt;
+    color: #00000;
+    font-weight: bold;
+}
+
+.quake_data {
+font-family: 'Droid Sans Mono';
+    font-size: 10pt;
+     color: #00000;
+    font-weight: 400;
+}
+/*
+ * This holds the "About", "Almanac", and plots on the right
+ */
+#content {
+    width: 62%;
+    min-height: 500px;
+    margin: 1%;
+    padding: 5px;
+    float: right;
+    border-top: 1px solid #dcdcdc;
+    border-right: 1px solid #a9a9a9;
+    border-bottom: 1px solid #808080;
+    border-left: 1px solid #a9a9a9;
+    background-color: #fafaff;
+    text-align: center;
+}
+
+#content .header {
+    font-size: 14pt;
+    font-weight: bolder;
+    color: #3d6c87;
+    margin-bottom: 10px;
+}
+
+
+#content .caption {
+    font-weight: bold;
+    color: #3d6c87; 
+}
+
+#content table {
+    text-align: center;
+    width: 100%;
+}
+
+#forecast .fc_table {
+   min-width: 600px;
+}
+#forecast .legend {
+  min-width: 600px;
+
+}
+#forecast .legend-img {
+   width: 20px;
+}
+#forecast .outlook-img {
+   width: 24px;
+}
+#forecast .col-outlook {
+   width: 36px;
+}
+
+#forecast .col-date {
+   width: 64px;
+}
+#forecast .col-temp {
+   width: 50px;
+}
+#forecast .col-wind {
+   width: 90px;
+}
+#forecast .col-pop {
+   width: 60px;
+}
+#forecast .col-precip {
+   width: 60px;
+}
+#forecast .col-obvis {
+   width: 60px;
+}
+#forecast .col-tides {
+   width: 100px;
+}
+#forecast .col-sun {
+   width: 110px;
+}
+#forecast .col-moon {
+   width: 90px;
+}
+#forecast .col-moonphase {
+   width: 30px;
+}
+
+#content td {
+    width: 50%;
+}
+
+#content .label {
+    text-align: right;
+    font-style: italic;
+}
+
+#content .data {
+    text-align: left;
+}
+
+#about, #almanac {
+    width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 30px;
+}
+
+.celestial_group {
+}
+
+.celestial_body {
+    width: 48%;
+    vertical-align: top;
+    display:inline-block;
+}
+
+#plots {
+    width: 90%;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+    
+#plots img {
+    border: thin solid #3d6c87;
+    margin: 3px;
+    padding: 3px;
+}
+
+#radar_img {
+    width: 350px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    margin: 3px;
+    padding: 3px;
+}
+
+#radar_img img {
+    margin-left: auto;
+    margin-right: auto;
+    width: 350px;
+    margin: 3px;
+    padding: 3px;
+}
+
+#radar_img p {
+    width: 350px;
+    font-style: italic;
+    font-size: smaller;
+    text-align: center;
+    margin-top: 0;
+}
+
+/*
+ * Navigation bar (week, month, etc.) at the bottom
+ */
+#navbar {
+    margin: 0 1% 1% 1%;
+    padding: 5px;
+    text-align: center;
+    clear: both;
+    border-top: 1px solid #dcdcdc;
+    border-right: 1px solid #a9a9a9;
+    border-bottom: 1px solid #808080;
+    border-left: 1px solid #a9a9a9;
+    background-color: #fafaff;
+}
+
+/*************** Global Styles *************/
+
+h2, h3, h4, h5, h6 {
+    color: #3d6c87;
+}
