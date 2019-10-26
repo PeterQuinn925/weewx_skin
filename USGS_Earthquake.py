@@ -1,4 +1,7 @@
 #!/usr/bin/python
+
+# Using https://leafletjs.com/examples/quick-start/
+
 import os
 import urllib2
 import subprocess
@@ -65,6 +68,7 @@ while True:
                file.write('class="stats_data">\n')
 # loop through and write text
                eqtime = []
+               eqtime_datetime = []
                equrl = []
                eqplace = []
                eqmag= []
@@ -74,6 +78,7 @@ while True:
                    temp_time_t = datetime.datetime.strptime(time.ctime(eqdata["features"][i]["properties"]["time"]/1000),"%a %b %d %H:%M:%S %Y")
                    temp_time_s = temp_time_t.strftime("%m-%d %I:%M %p")
                    eqtime.append(temp_time_s)
+                   eqtime_datetime.append(temp_time_t)
                    equrl.append(eqdata["features"][i]["properties"]["url"])
                    eqplace.append(eqdata["features"][i]["properties"]["place"])
                    eqmag.append(eqdata["features"][i]["properties"]["mag"])
@@ -96,9 +101,21 @@ while True:
                file.write("accessToken: 'pk.eyJ1IjoicGV0ZXJxdWlubjkyNSIsImEiOiJjazFmaGN2aW0wdHBxM2dxbzViN3l5dTRkIn0.jsrb9kj1DH_pa_GWc8rKYA'")
                file.write("}).addTo(mymap);\n")
 #loop and put circles on the map for each quake
+# roygbv purple in the last 20 minutes, blue if the last hr, green if last 4 hrs, yellow if older
                for i in range(0,n_quakes):
+                  tdelta = datetime.datetime.now() - eqtime_datetime[i]
+                  timediff = tdelta.total_seconds() /60
+                  if timediff <20:
+                     eq_color = "#660000"
+                  elif timediff < 60:
+                     eq_color = "#990000"
+                  elif timediff <60*4:
+                     eq_color = "#ff0000"
+                  else:
+                     eq_color = "#ff6666"
+                  
                   file.write('var circle = L.circle([' + eqlon[i] + ',' + eqlat[i] + '], {\n')
-                  file.write('color: "red", fillColor: "#f03", radius: ' + str(200*eqmag[i]) + '}).addTo(mymap);\n')
+                  file.write('color: "' + eq_color + '", fillColor: "' + eq_color + '", radius: ' + str(300*eqmag[i]) + '}).addTo(mymap);\n')
                file.write('</script>\n')
                file.close();
 #var circle = L.circle([37.88,-122.057], {
