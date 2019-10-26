@@ -25,10 +25,10 @@ else:
    html_file = "/var/www/weewx/earthquake.html"
 
 while True:
-   if os.path.isfile( earthquake_file ):
-       if ( int( time.time() ) - int( os.path.getmtime( earthquake_file ) ) ) > int( earthquake_stale_timer ):
-           earthquake_is_stale = True
-       else:
+   if os.path.isfile( earthquake_file ): #no need to check if stale since it sleeps
+#       if ( int( time.time() ) - int( os.path.getmtime( earthquake_file ) ) ) > int( earthquake_stale_timer ):
+#           earthquake_is_stale = True
+#       else:
    # File doesn't exist, download a new copy
           earthquake_is_stale = True
 
@@ -113,9 +113,10 @@ while True:
                      eq_color = "#ff0000"
                   else:
                      eq_color = "#ff6666"
-                  
+
                   file.write('var circle = L.circle([' + eqlon[i] + ',' + eqlat[i] + '], {\n')
                   file.write('color: "' + eq_color + '", fillColor: "' + eq_color + '", radius: ' + str(300*eqmag[i]) + '}).addTo(mymap);\n')
+                  file.write('circle.bindPopup("%5.2f   %s");\n' % (eqmag[i], eqplace[i]))
                file.write('</script>\n')
                file.close();
 #var circle = L.circle([37.88,-122.057], {
