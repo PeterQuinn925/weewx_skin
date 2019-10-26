@@ -64,7 +64,7 @@ while True:
        try:
            with open( html_file, 'w+' ) as file:
                file.write('<div id ="earthquake"\n')
-               file.write('style = "width: 350px; height: 350px;"\n')
+               file.write('style = "width: 350px;"\n')
                file.write('class="quake_data">\n')
 # loop through and write text
                eqtime = []
