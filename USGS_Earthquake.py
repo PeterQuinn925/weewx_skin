@@ -22,7 +22,7 @@ if os.name == "nt": #running on windows
    html_file = "c:\users\peter\earthquake.html"
 else:
    earthquake_file = "/var/tmp/earthquake.json"
-   html_file = "/var/www/html/weewx/earthquake.html"
+   html_file = "/var/www/weewx/earthquake.html"
 
 while True:
    if os.path.isfile( earthquake_file ):
