@@ -195,6 +195,10 @@ font-family: 'Droid Sans Mono';
 #forecast .outlook-img {
    width: 24px;
 }
+#forecast .precip-img {
+   width: 24px;
+}
+
 #forecast .col-outlook {
    width: 36px;
 }
@@ -315,5 +319,6 @@ font-family: 'Droid Sans Mono';
 /*************** Global Styles *************/
 
 h2, h3, h4, h5, h6 {
-    color: #3d6c87;
+/*    color: #3d6c87;*/
+      color: black;
 }
