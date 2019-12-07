@@ -13,9 +13,9 @@ latitude = 37.89
 longitude = -122.05
 earthquake_maxradiuskm = 300
 earthquake_stale_timer = 600 #60 sec for now, increase to 600 later
-n_quakes = 10 #max number of quakes to list
+max_quakes = 10 #max number of quakes to list
 
-earthquake_url = "http://earthquake.usgs.gov/fdsnws/event/1/query?limit=%s&lat=%s&lon=%s&maxradiuskm=%s&format=geojson&nodata=204&minmag=2" % ( n_quakes, latitude, longitude, earthquake_maxradiuskm )
+earthquake_url = "http://earthquake.usgs.gov/fdsnws/event/1/query?limit=%s&lat=%s&lon=%s&maxradiuskm=%s&format=geojson&nodata=204&minmag=2" % ( max_quakes, latitude, longitude, earthquake_maxradiuskm )
 
 if os.name == "nt": #running on windows
    earthquake_file = "c:\Users\peter\earthquake.json"
@@ -42,12 +42,14 @@ while True:
            response = urllib2.urlopen( req )
            page = response.read()
            response.close()
+           print datetime.datetime.now(), " read method1"
        except Exception as error:
            # Nested try - only execute if the urllib2 method fails
            try:
                command = 'curl -L --silent "%s"' % earthquake_url
                p = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
                page = p.communicate()[0]
+               print datetime.datetime.now(), " read method 2"
            except Exception as error:
                raise Warning( "Error downloading earthquake data using urllib2 and subprocess curl. Your software may need to be updated, or the URL is incorrect. You are trying to use URL: %s, and the error is: %s" % ( earthquake_url, error ) )
 
@@ -74,6 +76,7 @@ while True:
                eqmag= []
                eqlat = []
                eqlon = []
+               n_quakes = max_quakes
                for i in range(0,n_quakes):
                    temp_time_t = datetime.datetime.strptime(time.ctime(eqdata["features"][i]["properties"]["time"]/1000),"%a %b %d %H:%M:%S %Y")
                    temp_time_s = temp_time_t.strftime("%m-%d %I:%M %p")
@@ -85,6 +88,12 @@ while True:
                    eqlat.append(str(round( eqdata["features"][i]["geometry"]["coordinates"][0], 4 ) ))
                    eqlon.append(str(round( eqdata["features"][i]["geometry"]["coordinates"][1], 4 ) ))
                    file.write("<br>%s  %5.2f   %s\n" % (eqtime[i], eqmag[i], eqplace[i]))
+                   print eqplace[i]
+                   tdelta = datetime.datetime.now() - eqtime_datetime[i]
+                   timediff = tdelta.total_seconds() /3600 #hours
+                   if timediff > 24: # only show quakes in the last 24 hours
+                      n_quakes = i
+                      break
                file.write('</div>')
                file.write('<script>')
                file.write("var mymap = L.map('mapid').setView([37.89, -122.05], 8);\n")
@@ -105,7 +114,7 @@ while True:
                for i in range(0,n_quakes):
                   tdelta = datetime.datetime.now() - eqtime_datetime[i]
                   timediff = tdelta.total_seconds() /60
-                  if timediff <20:
+                  if timediff <30:
                      eq_color = "#660000"
                   elif timediff < 60:
                      eq_color = "#990000"
