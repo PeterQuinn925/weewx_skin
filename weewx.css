@@ -199,6 +199,10 @@ font-family: 'Droid Sans Mono';
    width: 24px;
 }
 
+#forecast .obvis-img {
+   width: 24px;
+}
+
 #forecast .col-outlook {
    width: 36px;
 }
