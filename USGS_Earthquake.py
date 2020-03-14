@@ -87,13 +87,13 @@ while True:
                    eqmag.append(eqdata["features"][i]["properties"]["mag"])
                    eqlat.append(str(round( eqdata["features"][i]["geometry"]["coordinates"][0], 4 ) ))
                    eqlon.append(str(round( eqdata["features"][i]["geometry"]["coordinates"][1], 4 ) ))
-                   file.write("<br>%s  %5.2f   %s\n" % (eqtime[i], eqmag[i], eqplace[i]))
-                   print eqplace[i]
                    tdelta = datetime.datetime.now() - eqtime_datetime[i]
                    timediff = tdelta.total_seconds() /3600 #hours
                    if timediff > 24: # only show quakes in the last 24 hours
                       n_quakes = i
                       break
+                   file.write("<br>%s  %5.2f   %s\n" % (eqtime[i], eqmag[i], eqplace[i]))
+                   print eqplace[i]
                file.write('</div>')
                file.write('<script>')
                file.write("var mymap = L.map('mapid').setView([37.89, -122.05], 8);\n")
@@ -103,14 +103,15 @@ while True:
 #id: 'mapbox.streets',
 #accessToken: 'pk.eyJ1IjoicGV0ZXJxdWlubjkyNSIsImEiOiJjazFmaGN2aW0wdHBxM2dxbzViN3l5dTRkIn0.jsrb9kj1DH_pa_GWc8rKYA'
 #}).addTo(mymap);
-               file.write("L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {\n")
+#               file.write("L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {\n")
+               file.write("L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {\n")
                file.write("attribution: 'Map data &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, <a href=\"https://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA</a>, ")
                file.write("Imagery  <a href=\"https://www.mapbox.com/\">Mapbox</a>',")
-               file.write("maxZoom: 18,id: 'mapbox.streets',\n")
+               file.write("tilesize: 512, maxZoom: 18,id: 'mapbox/streets-v11',\n")
                file.write("accessToken: 'pk.eyJ1IjoicGV0ZXJxdWlubjkyNSIsImEiOiJjazFmaGN2aW0wdHBxM2dxbzViN3l5dTRkIn0.jsrb9kj1DH_pa_GWc8rKYA'")
                file.write("}).addTo(mymap);\n")
 #loop and put circles on the map for each quake
-# roygbv purple in the last 20 minutes, blue if the last hr, green if last 4 hrs, yellow if older
+# Darker red means more recent
                for i in range(0,n_quakes):
                   tdelta = datetime.datetime.now() - eqtime_datetime[i]
                   timediff = tdelta.total_seconds() /60
