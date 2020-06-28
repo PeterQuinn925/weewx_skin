@@ -10,6 +10,8 @@
 # Description:       Put a long description of the service here
 ### END INIT INFO
 
+#for some unknown reason, the python fails after a few days. Now resetting this service daily during database backup cron job
+
 # Change the next 3 lines to suit where you install your script and what you want to call it
 DIR=/usr/local/bin/eq_service
 DAEMON=$DIR/USGS_Earthquake.py
