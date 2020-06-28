@@ -1,0 +1,9 @@
+echo "Backing up weewx"
+sudo /etc/init.d/weewx stop
+echo "Restart earthquake"
+sudo /etc/init.d/eq_service.sh restart
+sleep 10
+sudo cp -f /var/lib/weewx/weewx.sdb /var/lib/weewx/weewx_backup.sdb
+sudo /etc/init.d/weewx start
+cd /home/pi/motion-uploader
+./uploader.py ./uploader.cfg /var/lib/weewx/weewx_backup.sdb
