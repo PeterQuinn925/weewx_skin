@@ -3,7 +3,7 @@
 # Using https://leafletjs.com/examples/quick-start/
 
 import os
-import urllib2
+import urllib.request
 import subprocess
 import json
 import time
@@ -14,12 +14,13 @@ longitude = -122.05
 earthquake_maxradiuskm = 300
 earthquake_stale_timer = 600 #60 sec for now, increase to 600 later
 max_quakes = 10 #max number of quakes to list
+earthquake_is_stale = True
 
 earthquake_url = "http://earthquake.usgs.gov/fdsnws/event/1/query?limit=%s&lat=%s&lon=%s&maxradiuskm=%s&format=geojson&nodata=204&minmag=2" % ( max_quakes, latitude, longitude, earthquake_maxradiuskm )
 
 if os.name == "nt": #running on windows
-   earthquake_file = "c:\Users\peter\earthquake.json"
-   html_file = "c:\users\peter\earthquake.html"
+   earthquake_file = "c:\\Users\\peter\\earthquake.json"
+   html_file = "c:\\users\\peter\\earthquake.html"
 else:
    earthquake_file = "/var/tmp/earthquake.json"
    html_file = "/var/www/weewx/earthquake.html"
@@ -42,22 +43,22 @@ while True:
            response = urllib2.urlopen( req )
            page = response.read()
            response.close()
-           print datetime.datetime.now(), " read method1"
+           print (datetime.datetime.now(), " read method1")
        except Exception as error:
            # Nested try - only execute if the urllib2 method fails
            try:
                command = 'curl -L --silent "%s"' % earthquake_url
                p = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
                page = p.communicate()[0]
-               print datetime.datetime.now(), " read method 2"
+               print (datetime.datetime.now(), " read method 2")
            except Exception as error:
                raise Warning( "Error downloading earthquake data using urllib2 and subprocess curl. Your software may need to be updated, or the URL is incorrect. You are trying to use URL: %s, and the error is: %s" % ( earthquake_url, error ) )
 
        # Save earthquake data to file. w+ creates the file if it doesn't exist, and truncates the file and re-writes it everytime
        try:
-           with open( earthquake_file, 'w+' ) as file:
+           with open( earthquake_file, 'wb' ) as file:
                file.write( page )
-       except IOError, e:
+       except IOError as e:
            raise Warning( "Error writing earthquake data to %s. Reason: %s" % ( earthquake_file, e) )
               # Process the earthquake file
        with open( earthquake_file, "r" ) as read_file:
@@ -93,7 +94,7 @@ while True:
                       n_quakes = i
                       break
                    file.write("<br>%s  %5.2f   %s\n" % (eqtime[i], eqmag[i], eqplace[i]))
-                   print eqplace[i]
+                   print (eqplace[i])
                file.write('</div>')
                file.write('<script>')
                file.write("var mymap = L.map('mapid').setView([37.89, -122.05], 8);\n")
@@ -132,6 +133,6 @@ while True:
 #var circle = L.circle([37.88,-122.057], {
 #  color: "red", fillColor: '#f03', radius: 500}).addTo(mymap);
 
-       except IOError, e:
+       except IOError as e:
            raise Warning( "Error writing earthquake data to %s. Reason: %s" % ( earthquake_file, e) )
        time.sleep(earthquake_stale_timer)
