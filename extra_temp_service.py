@@ -21,5 +21,5 @@ class extraTService(StdService):
 	    #skip it if it's stale. Acurite Driver will be used instead
             if time.time() - os.path.getmtime("/var/tmp/extra_temp.txt") < 1200: #20minutes
                event.record['outTemp'] = float(value)
-        except Exception, e:
+        except Exception as e:
             syslog.syslog(syslog.LOG_ERR, "extratemp: cannot read value: %s" % e)
