@@ -96,7 +96,7 @@ class MotionUploader:
             print 'Go to this link in your browser:'
             print auth_uri
         
-            auth_code = raw_input('Enter the auth code: ')
+            auth_code = input('Enter the auth code: ')
             credentials = flow.step2_exchange(auth_code)
             storage.put(credentials)
                
