@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 '''
 Created on 6 Jun 2012
 #minor mods pdq 9/2016
@@ -25,12 +25,12 @@ from oauth2client import client
 from oauth2client.file import Storage
 from googleapiclient.http import MediaFileUpload
 
-import ConfigParser
+import configparser
 
 class MotionUploader:
     def __init__(self, config_file_path):
         # Load config
-        config = ConfigParser.ConfigParser()
+        config = configparser.ConfigParser()
         config.read(config_file_path)
         
         # OAuth folder
