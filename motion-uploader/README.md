@@ -1,7 +1,11 @@
 # motion-uploader
-Motion Google Drive Uploader
+~~Motion Google Drive Uploader
+~~http://jeremyblythe.blogspot.com ~~
+No longer using Motion Uploader. I couldn't get it to work right with Ubuntu on Raspi3. It kept running out of memory when uploading large files, like the weewx db. Small files were fine. So, I found the pyDrive library and used that instead.
 
-http://jeremyblythe.blogspot.com 
+Updated weewx_backup to use the new script and it's good to go. 
+
+https://pythonhosted.org/PyDrive/
 sudo pip install --upgrade google-api-python-client
 
 
