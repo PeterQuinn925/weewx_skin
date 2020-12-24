@@ -711,7 +711,7 @@ class Station(object):
                             subprocess.call(['/etc/init.d/extra_temp','start'])
                         if time.time() - os.path.getmtime("/var/tmp/extra_temp.txt") > 1200: #20 minutes old
                            data['outTemp'] = data['extraTemp1']                           
-                           syslog.syslog(syslog.LOG_ERR, "wifi device is stalled. switching to Acurite")
+                           log.error("wifi device is stalled. switching to Acurite")
             else:
                 data['channel'] = None
                 data['sensor_id'] = None
