@@ -3,9 +3,8 @@
 import socket
 from shutil import copyfile
 
-#Raspi2b is 10.0.0.20, Raspi3 is 10.0.0.30
-#UDP_IP = "10.0.0.20"
-UDP_IP = "10.0.0.30"
+UDP_IP = "10.0.0.20"
+# the ESP device has hardcoded 10.0.0.20 address
 UDP_PORT = 1025
 fname = "/var/tmp/extra_temp.txt"
 
