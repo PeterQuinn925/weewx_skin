@@ -83,7 +83,7 @@
 </script>
 ##        <img id="banner" src="backgrounds/oaks_cropped.jpg" alt="oaks"/>
 </div>
-## end custom section  
+## end custom section
       <h1>$station.location</h1>
           <h2>$current.dateTime.format("%A %B %d, %Y %-I:%M %p")</h2>
       </div>
@@ -294,7 +294,7 @@
                 </td>
               </tr>
               #end if
-  
+
               #if $day.UV.has_data
               <tr>
                 <td class="stats_label">
@@ -331,7 +331,7 @@
                 </td>
               </tr>
               #end if
-##custom section pdq 
+##custom section pdq
              <tr>
                 <td class="stats_label">
                   On This Day<br/>
@@ -351,7 +351,7 @@
                 #end for
                 </td>
               </tr>
- 
+
             </tbody>
           </table>
         </div> <!--End class "stats" -->
@@ -397,6 +397,8 @@ style = "width: 350px; height: 350px;" class="leaflet-container">
           <div id="forecast">
                   <div class = "caption">
                   Forecast
+                  <a href="nws/index.html"> Details</a>
+'
                   </div>
 ##<a href="single-table.html">single table</a><br/>
             #include "forecast_table.inc"
@@ -475,7 +477,7 @@ style = "width: 350px; height: 350px;" class="leaflet-container">
 ##          <img src="daypond.png"      alt="Pond Temperatures" />
 ##          #end if
         </div> <!-- End id "plots" -->
-      
+
         <div id="almanac">
           <div class="celestial_group">
             #if $almanac.hasExtras
@@ -550,7 +552,7 @@ style = "width: 350px; height: 350px;" class="leaflet-container">
             </div> <!-- end class "celestial_body" -->
             <div class="celestial_body">
               <table>
-                <caption class="caption">Moon</caption>  
+                <caption class="caption">Moon</caption>
                 <tr>
                   <td class="label">Rise:</td>
                   <td class="data">$almanac.moon.rise</td>
@@ -623,7 +625,7 @@ style = "width: 350px; height: 350px;" class="leaflet-container">
             #end if
           </div> <!-- end class "celestial_group" -->
         </div> <!-- end id "almanac" -->
-        
+
       </div> <!-- End id "content" -->
 
       <div id="navbar">
