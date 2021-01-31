@@ -369,9 +369,9 @@ from __future__ import print_function
 import logging
 import time
 import usb
-##pdq
+###pdq
 import os
-import subprocess	 
+import subprocess
 
 import weewx.drivers
 import weewx.wxformulas
@@ -519,9 +519,9 @@ class AcuRiteDriver(weewx.drivers.AbstractDevice):
 
         # if there is no connection to sensors, clear the readings
         if 'rssi' in packet and  packet['rssi'] == 0:
-            # pdq - changed outTemp to extraTemp1
-            packet['extraTemp1'] = None																 
-#            packet['outTemp'] = None
+# pdq - changed outTemp to extraTemp1
+#            packet['extraTemp1'] = None
+            packet['outTemp'] = None
             packet['outHumidity'] = None
             packet['windSpeed'] = None
             packet['windDir'] = None
@@ -695,22 +695,31 @@ class Station(object):
                         data['windDir'] = Station.decode_winddir(raw)
                         data['rain_total'] = Station.decode_rain(raw)
                     else:
+                        #pdq
                         #changed outTemp to extraTemp1
                         data['extraTemp1'] = Station.decode_outtemp(raw)
+                        #data['outTemp'] = Station.decode_outtemp(raw)
                         data['outHumidity'] = Station.decode_outhumid(raw)
-						## If the sun is shining directly on the wifi sensor, the temp spikes. Use Accurite data
-                        ## If the wifi temp is more than 5deg greater than accurite, use the accurite
-                        ## I might need to adjust this to only happen in the afternoon
-#not working                        if data['outTemp'] - data['extraTemp1'] > 5:
-#                           data['outTemp'] = data['extraTemp1']
-#                           syslog.syslog(syslog.LOG_ERR,"wifi device temp spike. switching to Acurite")
-                        ## determine if the wifi temp service is stalled. if it's stalled, then use Acurite data for outTemp
-                        ## first try to restart service
+                        #add the esp temp data here so that the real time gauge data works
+                        f=open('/var/tmp/extra_temp.txt')
+                        value = float(f.read())
+                        value = (value - 32) * 5/9 # convert to C 
+                        data['outTemp']=value
+                        f.close()
+                        #get the internal temp and RH from ESP32 device
+                        f=open('/var/tmp/inTemp.txt')
+                        value= f.read() #this will be in the format x,y where x is the temp and y is the RH
+                        inTempdata = value.rsplit(",")
+                        data['extraTemp2']=(float(inTempdata[0])-32)*5/9 #convert to degC
+                        data['inHumidity']=float(inTempdata[1])
+                        f.close
+                        # determine if the wifi temp service is stalled. if it's stalled, then use Acurite data for outTemp
+                        # first try to restart service
                         if time.time() - os.path.getmtime("/var/tmp/extra_temp.txt") > 960: #16 minutes old
                             subprocess.call(['/etc/init.d/extra_temp','stop'])
                             subprocess.call(['/etc/init.d/extra_temp','start'])
                         if time.time() - os.path.getmtime("/var/tmp/extra_temp.txt") > 1200: #20 minutes old
-                           data['outTemp'] = data['extraTemp1']                           
+                           data['outTemp'] = data['extraTemp1']
                            log.error("wifi device is stalled. switching to Acurite")
             else:
                 data['channel'] = None
