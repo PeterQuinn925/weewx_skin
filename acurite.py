@@ -706,13 +706,16 @@ class Station(object):
                         value = (value - 32) * 5/9 # convert to C 
                         data['outTemp']=value
                         f.close()
-                        #get the internal temp and RH from ESP32 device
-                        f=open('/var/tmp/inTemp.txt')
-                        value= f.read() #this will be in the format x,y where x is the temp and y is the RH
-                        inTempdata = value.rsplit(",")
-                        data['extraTemp2']=(float(inTempdata[0])-32)*5/9 #convert to degC
-                        data['inHumidity']=float(inTempdata[1])
-                        f.close
+                        try:
+                           #get the internal temp and RH from ESP32 device
+                           f=open('/var/tmp/inTemp.txt')
+                           value= f.read() #this will be in the format x,y where x is the temp and y is the RH
+                           inTempdata = value.rsplit(",")
+                           data['extraTemp2']=(float(inTempdata[0])-32)*5/9 #convert to degC
+                           data['inHumidity']=float(inTempdata[1])
+                           f.close
+                        except:
+                           log.error("Can't read Extratemp2 and/or inHumidity")
                         # determine if the wifi temp service is stalled. if it's stalled, then use Acurite data for outTemp
                         # first try to restart service
                         if time.time() - os.path.getmtime("/var/tmp/extra_temp.txt") > 960: #16 minutes old
