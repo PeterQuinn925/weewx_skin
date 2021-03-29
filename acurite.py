@@ -26,18 +26,14 @@
 # technical details for the development of this driver.
 
 """Driver for AcuRite weather stations.
-
 There are many variants of the AcuRite weather stations and sensors.  This
 driver is known to work with the consoles that have a USB interface such as
 models 01025, 01035, 02032C, and 02064C.
-
 The AcuRite stations were introduced in 2011.  The 02032 model was introduced
 in 2013 or 2014.  The 02032 appears to be a low-end model - it has fewer
 buttons, and a different pressure sensor.  The 02064 model was introduced in
 2015 and appears to be an attempt to fix problems in the 02032.
-
 AcuRite publishes the following specifications:
-
   temperature outdoor: -40F to 158F; -40C to 70C
    temperature indoor: 32F to 122F; 0C to 50C
      humidity outdoor: 1% to 99%
@@ -49,75 +45,52 @@ AcuRite publishes the following specifications:
   operating frequency: 433 MHz
         display power: 4.5V AC adapter (6 AA bateries, optional)
          sensor power: 4 AA batteries
-
 The memory size is 512 KB and is not expandable.  The firmware cannot be
 modified or upgraded.
-
 According to AcuRite specs, the update frequencies are as follows:
-
   wind speed: 18 second updates
   wind direction: 30 second updates
   outdoor temperature and humidity: 60 second updates
   pc connect csv data logging: 12 minute intervals
   pc connect to acurite software: 18 second updates
-
 In fact, because of the message structure and the data logging design, these
 are the actual update frequencies:
-
   wind speed: 18 seconds
   outdoor temperature, outdoor humidity: 36 seconds
   wind direction, rain total: 36 seconds
   indoor temperature, pressure: 60 seconds
   indoor humidity: 12 minutes (only when in USB mode 3)
-
 These are the frequencies possible when reading data via USB.
-
 There is no known way to change the archive interval of 12 minutes.
-
 There is no known way to clear the console memory via software.
-
 The AcuRite stations have no notion of wind gust.
-
 The pressure sensor in the console reports a station pressure, but the
 firmware does some kind of averaging to it so the console displays a pressure
 that is usually nothing close to the station pressure.
-
 According to AcuRite they use a 'patented, self-adjusting altitude pressure
 compensation' algorithm.  Not helpful, and in practice not accurate.
-
 Apparently the AcuRite bridge uses the HP03S integrated pressure sensor:
-
   http://www.hoperf.com/upload/sensor/HP03S.pdf
-
 The calculation in that specification happens to work for some of the AcuRite
 consoles (01035, 01036, others?).  However, some AcuRite consoles (only the
 02032?) use the MS5607-02BA03 sensor:
-
   http://www.meas-spec.com/downloads/MS5607-02BA03.pdf
-
 Communication
-
 The AcuRite station has 4 modes:
-
       show data   store data   stream data
   1   x           x
   2   x           
   3   x           x            x
   4   x                        x
-
 The console does not respond to USB requests when in mode 1 or mode 2.
-
 There is no known way to change the mode via software.
-
 The acurite stations are probably a poor choice for remote operation.  If
 the power cycles on the console, communication might not be possible.  Some
 consoles (but not all?) default to mode 2, which means no USB communication.
-
 The console shows up as a USB device even if it is turned off.  If the console
 is powered on and communication has been established, then power is removed,
 the communication will continue.  So the console appears to draw some power
 from the bus.
-
 Apparently some stations have issues when the history buffer fills up.  Some
 reports say that the station stops recording data.  Some reports say that
 the 02032 (and possibly other stations) should not use history mode at all
@@ -125,23 +98,18 @@ because the data are written to flash memory, which wears out, sometimes
 quickly.  Some reports say this 'bricks' the station, however those reports
 mis-use the term 'brick', because the station still works and communication
 can be re-established by power cycling and/or resetting the USB.
-
 There may be firmware timing issues that affect USB communication.  Reading
 R3 messages too frequently can cause the station to stop responding via USB.
 Putting the station in mode 3 sometimes interferes with the collection of
 data from the sensors; it can cause the station to report bad values for R1
 messages (this was observed on a 01036 console, but not consistantly).
-
 Testing with a 01036 showed no difference between opening the USB port once
 during driver initialization and opening the USB port for each read.  However,
 tests with a 02032 showed that opening for each read was much more robust.
-
 Message Types
-
 The AcuRite stations show up as USB Human Interface Device (HID).  This driver
 uses the lower-level, raw USB API.  However, the communication is standard
 requests for data from a HID.
-
 The AcuRite station emits three different data strings, R1, R2 and R3.  The R1
 string is 10 bytes long, contains readings from the remote sensors, and comes
 in different flavors.  One contains wind speed, wind direction, and rain
@@ -151,21 +119,17 @@ from the console, plus a whole bunch of calibration constants required to
 figure out the actual pressure and temperature.  The R3 string is 33 bytes
 and contains historical data and (apparently) the humidity readings from the
 console sensors.
-
 The contents of the R2 message depends on the pressure sensor.  For stations
 that use the HP03S sensor (e.g., 01035, 01036) the R2 message contains
 factory-set constants for calculating temperature and pressure.  For stations
 that use the MS5607-02BA03 sensor (e.g., 02032) the R2 message contents are
 unknown.  In both cases, the last 4 bytes appear to contain raw temperature
 and pressure readings, while the rest of the message bytes are constant.
-
 Message Maps
-
 R1 - 10 bytes
  0  1  2  3  4  5  6  7  8  9
 01 CS SS ?1 ?W WD 00 RR ?r ??
 01 CS SS ?8 ?W WT TT HH ?r ??
-
 01 CF FF FF FF FF FF FF 00 00      no sensor unit found
 01 FF FF FF FF FF FF FF FF 00      no sensor unit found
 01 8b fa 71 00 06 00 0c 00 00      connection to sensor unit lost
@@ -178,7 +142,6 @@ R1 - 10 bytes
 01 cd ff 78 00 67 3e 59 03 ff
 01 cd ff 71 01 39 39 71 03 ff
 01 cd ff 78 01 58 1b 4c 03 ff
-
 0: identifier                      01 indicates R1 messages
 1: channel         x & 0xf0        observed values: 0xC=A, 0x8=B, 0x0=C
 1: sensor_id hi    x & 0x0f
@@ -193,7 +156,6 @@ R1 - 10 bytes
 8: ?
 8: rssi           (x & 0x0f)       observed values: 0,1,2,3
 9: ?                               observed values: 0x00, 0xff
-
 0: identifier                      01 indicates R1 messages
 1: channel         x & 0xf0        observed values: 0xC=A, 0x8=B, 0x0=C
 1: sensor_id hi    x & 0x0f
@@ -208,17 +170,12 @@ R1 - 10 bytes
 8: ?
 8: rssi           (x & 0x0f)       observed values: 0,1,2,3
 9: ?                               observed values: 0x00, 0xff
-
-
 R2 - 25 bytes
  0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24
 02 00 00 C1 C1 C2 C2 C3 C3 C4 C4 C5 C5 C6 C6 C7 C7 AA BB CC DD TR TR PR PR
-
 02 00 00 4C BE 0D EC 01 52 03 62 7E 38 18 EE 09 C4 08 22 06 07 7B A4 8A 46
 02 00 00 80 00 00 00 00 00 04 00 10 00 00 00 09 60 01 01 01 01 8F C7 4C D3
-
 for HP03S sensor:
-
  0: identifier                                     02 indicates R2 messages
  1: ?                                              always seems to be 0
  2: ?                                              always seems to be 0
@@ -235,9 +192,7 @@ for HP03S sensor:
  20:    D sensor-specific parameter                0x01 - 0x0f
  21-22: TR measured temperature                    0x00 - 0xffff
  23-24: PR measured pressure                       0x00 - 0xffff
-
 for MS5607-02BA03 sensor:
-
  0: identifier                                     02 indicates R2 messages
  1: ?                                              always seems to be 0
  2: ?                                              always seems to be 0
@@ -254,18 +209,13 @@ for MS5607-02BA03 sensor:
  20:    D sensor-specific parameter                0x01
  21-22: TR measured temperature                    0x00 - 0xffff
  23-24: PR measured pressure                       0x00 - 0xffff
-
-
 R3 - 33 bytes
  0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 ...
 03 aa 55 01 00 00 00 20 20 ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ...
-
 An R3 report consists of multiple R3 messages.  Each R3 report contains records
 that are delimited by the sequence 0xaa 0x55.  There is a separator sequence
 prior to the first record, but not after the last record.
-
 There are 6 types of records, each type identified by number:
-
    1,2  8-byte chunks of historical min/max data.  Each 8-byte chunk
           appears to contain two data bytes plus a 5-byte timestamp
           indicating when the event occurred.
@@ -275,27 +225,19 @@ There are 6 types of records, each type identified by number:
    5    Timestamp indicating when the request for history data was
           received, based on the console clock.
    6    End marker indicating that no more data follows in the report.
-
 Each record has the following header:
-
    0: record id            possible values are 1-6
  1,2: unknown              always seems to be 0
  3,4: size                 size of record, in 'chunks'
    5: checksum             total of bytes 0..4 minus one
-
   where the size of a 'chunk' depends on the record id:
-
    id         chunk size
-
    1,2,3,5    8 bytes
    4          32 bytes
    6          n/a
-
 For all but ID6, the total record size should be equal to 6 + chunk_size * size
 ID6 never contains data, but a size of 4 is always declared.
-
 Timestamp records (ID3 and ID5):
-
  0-1: for ID3, the number of history records when request was received
  0-1: for ID5, unknown
    2: year
@@ -305,17 +247,13 @@ Timestamp records (ID3 and ID5):
    6: minute
    7: for ID3, checksum - sum of bytes 0..6 (do not subtract 1)
    7: for ID5, unknown (always 0xff)
-
 History Records (ID4):
-
 Bytes 3,4 contain the number of history records that follow, say N.  After
 stripping off the 6-byte record header there should be N*32 bytes of history
 data.  If not, then the data are corrupt or there was an incomplete transfer.
-
 The most recent history record is first, so the timestamp on record ID applies
 to the first 32-byte chunk, and each record is 12 minutes into the past from
 the previous.  Each 32-byte chunk has the following decoding:
-
    0-1: indoor temperature    (r[0]*256 + r[1])/18 - 100         C
    2-3: outdoor temperature   (r[2]*256 + r[3])/18 - 100         C
      4: unknown
@@ -335,17 +273,13 @@ the previous.  Each 32-byte chunk has the following decoding:
  24-25: rain                  (r[24]*256 + r[25]) * 0.254        mm
  26-30: rain timestamp        0xff if no rain event
     31: unknown
-
 bytes 4 and 6 always seem to be 0
 byte 16 is always zero on 02032 console, but is a copy of byte 21 on 01035.
 byte 31 is always zero on 02032 console, but is a copy of byte 30 on 01035.
-
-
 X1 - 2 bytes
  0  2
 7c e2
 84 e2
-
 0: ?
 1: ?
 """
@@ -401,20 +335,16 @@ def _fmt_bytes(data):
 
 class AcuRiteDriver(weewx.drivers.AbstractDevice):
     """weewx driver that communicates with an AcuRite weather station.
-
     model: Which station model is this?
     [Optional. Default is 'AcuRite']
-
     max_tries - How often to retry communication before giving up.
     [Optional. Default is 10]
-
     use_constants - Indicates whether to use calibration constants when
     decoding pressure and temperature.  For consoles that use the HP03 sensor,
     use the constants reported  by the sensor.  Otherwise, use a linear
     approximation to derive pressure and temperature values from the sensor
     readings.
     [Optional.  Default is True]
-
     ignore_bounds - Indicates how to treat calibration constants from the
     pressure/temperature sensor.  Some consoles report constants that are
     outside the limits specified by the sensor manufacturer.  Typically this
@@ -701,11 +631,15 @@ class Station(object):
                         #data['outTemp'] = Station.decode_outtemp(raw)
                         data['outHumidity'] = Station.decode_outhumid(raw)
                         #add the esp temp data here so that the real time gauge data works
-                        f=open('/var/tmp/extra_temp.txt')
-                        value = float(f.read())
-                        value = (value - 32) * 5/9 # convert to C 
-                        data['outTemp']=value
-                        f.close()
+						#occasional crash. adding try
+                        try:
+                           f=open('/var/tmp/extra_temp.txt')
+                           value = float(f.read())
+                           value = (value - 32) * 5/9 # convert to C 
+                           data['outTemp']=value  
+                           f.close()
+                        except:
+                           log.error("Can't read Extratemp")   
                         try:
                            #get the internal temp and RH from ESP32 device
                            f=open('/var/tmp/inTemp.txt')
@@ -972,10 +906,8 @@ class AcuRiteConfEditor(weewx.drivers.AbstractConfEditor):
         return """
 [AcuRite]
     # This section is for AcuRite weather stations.
-
     # The station model, e.g., 'AcuRite 01025' or 'AcuRite 02032C'
     model = 'AcuRite 01035'
-
     # The driver to use:
     driver = weewx.drivers.acurite
 """
