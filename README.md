@@ -5,10 +5,10 @@ Replacement thermometer hardware and software is documented here: https://hackad
 Earthquake map from: https://leafletjs.com/examples/quick-start/
 
 Services:
-extra_temp.py goes in /home/pi. It's the script that creates the text file with the temp in it.
+<p>extra_temp.py goes in /home/pi. It's the script that creates the text file with the temp in it.
 extra_temp_service.py is the weewx service that reads it
-inTemp.py - same notes as extra_temp
-UDP_sensor.py - same notes as extra_temp. This is an extensible version of the inTemp.py and extra_temp.py and takes the port and filename as arguments. It's used for the air quality service aq-sensor
+<p>inTemp.py - same notes as extra_temp
+<p>UDP_sensor.py - same notes as extra_temp. This is an extensible version of the inTemp.py and extra_temp.py and takes the port and filename as arguments. It's used for the air quality service aq-sensor
 
 this.py goes in /usr/share/weewx/user
 It drives the On this Date in 2019 high/low/rain. It is a search extension and goes in the user directory under where the executables are. It's a terrible name, agreed.
