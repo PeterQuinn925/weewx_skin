@@ -636,10 +636,10 @@ class Station(object):
                            f=open('/var/tmp/extra_temp.txt')
                            value = float(f.read())
                            value = (value - 32) * 5/9 # convert to C 
-                           data['outTemp']=value  
+                           data['outTemp']=value
                            f.close()
                         except:
-                           log.error("Can't read Extratemp")   
+                           log.error("Can't read Extratemp")
                         try:
                            #get the internal temp and RH from ESP32 device
                            f=open('/var/tmp/inTemp.txt')
@@ -650,6 +650,17 @@ class Station(object):
                            f.close
                         except:
                            log.error("Can't read Extratemp2 and/or inHumidity")
+                        try:
+                           #get the  air quality values from the AQ sensor
+                           f=open('/var/tmp/aq.txt')
+                           value= f.read() #this will be in the format x,y where x is the PM2.5 and y is the PM10
+                           AQdata = eval(value) #split into a tuple
+                           data['leafTemp1']=float(AQdata[0]) #repurpose the leafTemp1 and leaftTemp2 fields
+                           data['leafTemp2']=float(AQdata[1])
+                           f.close
+                        except:
+                           log.error("Can't read AQ data")
+
                         # determine if the wifi temp service is stalled. if it's stalled, then use Acurite data for outTemp
                         # first try to restart service
                         if time.time() - os.path.getmtime("/var/tmp/extra_temp.txt") > 960: #16 minutes old
