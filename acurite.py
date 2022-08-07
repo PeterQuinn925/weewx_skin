@@ -655,8 +655,8 @@ class Station(object):
                            f=open('/var/tmp/aq.txt')
                            value= f.read() #this will be in the format x,y where x is the PM2.5 and y is the PM10
                            AQdata = eval(value) #split into a tuple
-                           data['leafTemp1']=float(AQdata[0]) #repurpose the leafTemp1 and leaftTemp2 fields
-                           data['leafTemp2']=float(AQdata[1])
+                           data['pm2_5']=float(AQdata[0]) 
+                           data['pm10_0']=float(AQdata[1])
                            f.close
                         except:
                            log.error("Can't read AQ data")
