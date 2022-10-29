@@ -665,7 +665,8 @@ class Station(object):
                            f=open('/var/tmp/pooltemp')
                            value= f.read() #this will be in the format x,y where x is the temp in degF and y is nothing
                            pooltemp = eval(value) #split into a tuple
-                           data['soilTemp1']=float(pooltemp[0])
+			   pooltempC = (float(pooltemp[0]) - 32) * 5/9 # convert to C
+                           data['soilTemp1']=pooltempC
                            f.close
                         except:
                            log.error("Can't read pool temp data")
