@@ -660,6 +660,15 @@ class Station(object):
                            f.close
                         except:
                            log.error("Can't read AQ data")
+                        try:
+                           #get the pool temperature values from pool temp sensor
+                           f=open('/var/tmp/pooltemp')
+                           value= f.read() #this will be in the format x,y where x is the temp in degF and y is nothing
+                           pooltemp = eval(value) #split into a tuple
+                           data['soilTemp1']=float(pooltemp[0])
+                           f.close
+                        except:
+                           log.error("Can't read pool temp data")
 
                         # determine if the wifi temp service is stalled. if it's stalled, then use Acurite data for outTemp
                         # first try to restart service
