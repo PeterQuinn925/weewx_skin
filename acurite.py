@@ -632,24 +632,34 @@ class Station(object):
                         data['outHumidity'] = Station.decode_outhumid(raw)
                         #add the esp temp data here so that the real time gauge data works
 						#occasional crash. adding try
+                        #log.info("test for late afternoon temp spike: %i", int(time.strftime("%H")))
+                        localhour = int(time.strftime("%H"))
+                        #lasttemp = data['outTemp'] 
                         try:
                            f=open('/var/tmp/extra_temp.txt')
                            value = float(f.read())
-                           value = (value - 32) * 5/9 # convert to C 
+                           value = (value - 32) * 5/9 # convert to C
                            data['outTemp']=value
                            f.close()
                         except:
                            log.error("Can't read Extratemp")
+                        #if localhour>15 and localhour<19: #possible trouble 4-6 pm
+                        #   if (value-lasttemp)>0.25: # if the temp has rising more than 1/4 of a degree in the last 2 minutes it's a spike
+                        #      data['outTemp']=lasttemp # reset the value back to the old temp
+                        #      log.info("temp spike in the afternoon. Holding outTemp steady")
                         try:
                            #get the internal temp and RH from ESP32 device
-                           f=open('/var/tmp/inTemp.txt')
+                           #10/7/23 pdq - change out ESP32 device for epaper nano iot with MQTT and remove .txt from filename
+                           #remove humdity. Didn't capture it in the new sensro - not interesting
+                           f=open('/var/tmp/inTemp')
                            value= f.read() #this will be in the format x,y where x is the temp and y is the RH
-                           inTempdata = value.rsplit(",")
-                           data['extraTemp2']=(float(inTempdata[0])-32)*5/9 #convert to degC
-                           data['inHumidity']=float(inTempdata[1])
+                           inTempdata = value[1:-3] # used to be value.rsplit(",")
+                           data['extraTemp2']=(float(inTempdata)-32)*5/9 #convert to degC
+                           #data['inHumidity']=float(inTempdata[1])
                            f.close
                         except:
                            log.error("Can't read Extratemp2 and/or inHumidity")
+                           log.error(inTempdata[0])
                         try:
                            #get the  air quality values from the AQ sensor
                            f=open('/var/tmp/aq.txt')
@@ -665,7 +675,7 @@ class Station(object):
                            f=open('/var/tmp/pooltemp')
                            value= f.read() #this will be in the format x,y where x is the temp in degF and y is nothing
                            pooltemp = eval(value) #split into a tuple
-			   pooltempC = (float(pooltemp[0]) - 32) * 5/9 # convert to C
+                           pooltempC = (float(pooltemp[0]) - 32) * 5/9 # convert to C
                            data['soilTemp1']=pooltempC
                            f.close
                         except:
