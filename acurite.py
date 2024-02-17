@@ -623,9 +623,23 @@ class Station(object):
                     data['windSpeed'] = Station.decode_windspeed(raw)
                     if raw[3] & 0x0f == 1:
                         data['windDir'] = Station.decode_winddir(raw)
-                        data['rain_total'] = Station.decode_rain(raw)
+                        #data['rain_total'] = Station.decode_rain(raw) #ignore rain from this sensor
                     else:
                         #pdq
+                        #built in rain sensor no longer works. replacing it with new sensor that sends data to a file via MQTT
+                        try:
+                           #get the rain info from the file
+                           # json data {"worktime": float, "rainfall": float, "hourrain": float, "bucketcount": int}
+                           # file contains (worktime, rainfall, hourrain, bucketcount). We only need rainfall
+                           f=open('/var/tmp/rain')
+                           value= f.read()
+                           s = value.split(",") 
+                           raindata = s[1] #2nd value, which is the total
+                           data['rain_total']=(float(raindata)/25.4) #convert mm to inch
+                           f.close
+                        except:
+                           log.error("Can't read rain data")
+                           log.error(value)
                         #changed outTemp to extraTemp1
                         data['extraTemp1'] = Station.decode_outtemp(raw)
                         #data['outTemp'] = Station.decode_outtemp(raw)
