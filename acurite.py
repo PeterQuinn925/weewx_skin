@@ -676,7 +676,7 @@ class Station(object):
                            log.error(inTempdata[0])
                         try:
                            #get the  air quality values from the AQ sensor
-                           f=open('/var/tmp/aq.txt')
+                           f=open('/var/tmp/aqi')
                            value= f.read() #this will be in the format x,y where x is the PM2.5 and y is the PM10
                            AQdata = eval(value) #split into a tuple
                            data['pm2_5']=float(AQdata[0]) 
